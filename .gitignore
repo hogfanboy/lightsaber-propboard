@@ -1,0 +1,15 @@
+# Build output
+build/
+.pio/
+*.elf
+*.map
+*.hex
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+
+# Sound files / personal media - never commit
+media/
