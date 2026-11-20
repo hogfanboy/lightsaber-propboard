@@ -1,0 +1,11 @@
+await eda.dmt_EditorControl.openDocument("b3a6afff1e9d1cad"); await new Promise(r=>setTimeout(r,800));
+let n=0;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1769.012,49,1750.0,29.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1750.0,29.0,1750.0,-27.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1750.0,-27.0,1770.0,-47.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1770.0,-47.0,1770.0,-77.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1770.0,-77.0,1746.812,-101,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1746.812,-101,1788.0,-143.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1788.0,-143.0,1788.0,-267.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1788.0,-267.0,1775.588,-278.7,10,false)) n++;
+await eda.pcb_Document.save(); return n;

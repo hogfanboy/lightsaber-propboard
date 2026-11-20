@@ -13,3 +13,10 @@ desktop.ini
 
 # Sound files / personal media - never commit
 media/
+
+# Raw handoff from claude.ai (has personal details) - local only
+CLAUDE NOTES.md
+
+# EasyEDA bridge message folders and Python cache
+tools/easyeda/relay/
+__pycache__/

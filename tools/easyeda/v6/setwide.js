@@ -1,0 +1,12 @@
+await eda.dmt_EditorControl.openDocument("b3a6afff1e9d1cad"); await new Promise(r=>setTimeout(r,800));
+const c = await eda.pcb_Drc.getCurrentRuleConfiguration();
+const T = c.config.Physics.Track;
+T.blade30 = {editName:"blade30", unit:"mm", isSetDefault:false, form:{status:1, data:{"1":{minValue:0.254, defaultValue:0.762, maxValue:2.54}}}};
+const r1 = await eda.pcb_Drc.overwriteCurrentRuleConfiguration(c.config);
+const nr = await eda.pcb_Drc.getNetRules();
+const wide = ["VBAT","VSYS","VSW","$1N327"];
+for (const n of nr) if (wide.includes(n.name)) n.Track = "blade30";
+const r2 = await eda.pcb_Drc.overwriteNetRules ? await eda.pcb_Drc.overwriteNetRules(nr) : "no overwriteNetRules";
+const after = (await eda.pcb_Drc.getNetRules()).filter(n=>n.Track!=="default").map(n=>[n.name,n.Track]);
+const c2 = await eda.pcb_Drc.getCurrentRuleConfiguration();
+return {r1, r2, after, has: Object.keys(c2.config.Physics.Track)};

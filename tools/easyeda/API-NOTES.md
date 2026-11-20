@@ -1,0 +1,35 @@
+# EasyEDA Pro API notes (Run API Gateway bridge)
+
+## Scripts here
+- `v6/` (current layout): fan_route, pours, drcrun (pour rebuild + DRC), drconly, drcsum.py, dumpr, dumpid, setwide, rip,
+  relink_gnd, round_gnd, widen, gfix1-3, push_btn, push_bi, poll, rules.
+- `v4/` (older): z_drc (DRC without pour rebuild), z_rb (rebuild pours), g4 (dump pads/lines/vias), z_nl (schematic netlist),
+  imp (opens Import Changes), rz2.py (render a region).
+- The Python grid router ran in the claude.ai cloud and isn't on this PC; its source is in the claude.ai project doc `claude/propboard-router.md`.
+
+## Gotchas
+- Bridge calls time out at ~30 s (autorouter up to 60 s). Work in small batches. Avoid `sch_Netlist.getNetlist()` and `lib_Footprint.get()` (too slow).
+- Long jobs: start without awaiting (`.then(r=>globalThis.__ar=r)`) and poll `return globalThis.__ar`.
+  `autoRouting()` can report success with nets unrouted: always DRC. Its "failedNets" lists untouched nets.
+- When the 3D view is active, getAll returns null.
+- **Create vias BEFORE the tracks that end on them**, or DRC reports them disconnected (delete and re-create the track).
+  A via only connects to a track END, not its middle: split the track.
+- Round track endpoints to 3 decimals so they match via centres exactly.
+- `pcb_PrimitiveVia.create(net, x, y, 12, 24)`: mil; min via 12 hole / 24 dia. Clearance rule 0.152 mm (6 mil).
+  Via-to-track clearance ~ 12 + half-width + 6 mil.
+- `pcb_PrimitiveLine.create(net, layer 1|2, x0, y0, x1, y1, width)`; `.modify(id,{lineWidth})` sometimes throws
+  "reading 'isAsync'": try/catch and retry.
+- Pour: `eda.pcb_PrimitivePour.create("GND", layer, eda.pcb_MathPolygon.createPolygon([-20,-380,"L",-20,380,3570,380,3570,-380,-20,-380]), "solid", false, name, 1, 0.2, false)`
+  then `rebuildCopperRegion()`. Trust DRC for islands.
+- Rules: `pcb_Drc.getCurrentRuleConfiguration()` / `overwriteCurrentRuleConfiguration(config)`; `getNetRules()` / `overwriteNetRules(list)`.
+- In-place pad edits (`setState_Pad`) don't update pour clearance: edit footprints instead. Pad shape string 'OVAL'.
+- Board outline with fillets: `pcb_MathPolygon.createPolygon([... 'L', x, y, 'ARC', 90, x, y ...])` on layer 11.
+- Schematic: y goes up, rotation counter-clockwise. Net ports/flags can't be moved with `modify`: delete and recreate with
+  `createNetPort('IN', net, x, y, rot)` / `createNetFlag('Ground','GND', x, y, rot)`. Port above a stub end: rot 90; below: rot 270
+  (verify with `sch_Primitive.getPrimitivesBBox`). A port/flag exactly on a pin end connects by itself. Wires that only cross don't connect.
+- Find/place parts: `eda.lib_Device.getByLcscIds('C...')`, then `sch_PrimitiveComponent.create({libraryUuid, uuid}, x, y, '', rot, false, true, true)`,
+  `modify(id,{designator})`, `getAllPinsByPrimitiveId`. Swap a part: delete, create, set no-connects, rewire, then
+  `eda.pcb_Document.importChanges()`; the designer clicks Apply.
+- Check schematic with `eda.sch_ManufactureData.getNetlistFile()` -> `.text()` (JSON, `components[id].pinInfoMap`).
+- Rendered-image calls return stale pictures: ask the designer for a screenshot.
+- `eda.sch_Document.save()` saves the sheet. Library lookup gives basic/extended but not price/stock.

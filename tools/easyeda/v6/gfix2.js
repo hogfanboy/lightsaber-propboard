@@ -1,0 +1,18 @@
+await eda.dmt_EditorControl.openDocument("b3a6afff1e9d1cad"); await new Promise(r=>setTimeout(r,800));
+const old=(await eda.pcb_PrimitiveVia.getAll()).filter(v=>v.getState_Net()==="GND"&&Math.hypot(v.getState_X()-2513.9,v.getState_Y()+143.5)<2);
+if(old.length) await eda.pcb_PrimitiveVia.delete(old.map(v=>v.getState_PrimitiveId()));
+let n=0;
+if(await eda.pcb_PrimitiveVia.create("GND",1856.0,-61.0,12,22)) n++;
+if(await eda.pcb_PrimitiveVia.create("GND",1786.0,-61.0,12,22)) n++;
+if(await eda.pcb_PrimitiveVia.create("GND",2516.0,-141.0,12,22)) n++;
+if(await eda.pcb_PrimitiveVia.create("GND",2592.0,-217.0,12,22)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1895.588,-101.3,1856.0,-61.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",2,1856.0,-61.0,1786.0,-61.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1786.0,-61.0,1746.812,-101,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1942.941,-115.687,1928.0,-101.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,1928.0,-101.0,1895.588,-101.3,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,2567.988,-98.3,2558.0,-99.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,2558.0,-99.0,2516.0,-141.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",2,2516.0,-141.0,2592.0,-217.0,10,false)) n++;
+if(await eda.pcb_PrimitiveLine.create("GND",1,2592.0,-217.0,2591.588,-261,10,false)) n++;
+await eda.pcb_Document.save(); return [old.length,n];
