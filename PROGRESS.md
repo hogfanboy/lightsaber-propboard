@@ -20,3 +20,14 @@ PropBoard V1 ready to order from JLCPCB. No rush: the club builds it in fall 202
 5. Re-open Quote & Order so Gerbers/BOM/CPL regenerate. Leave SPK1, BAT2, PWR_BTN, BLADE1 out of assembly.
 6. Pick first order size: 5 (~$125), 20-30, or 50 (~$325-350).
 7. First prototype: read sensor WHO_AM_I (expect 0x11) before trusting it. Then start firmware.
+
+## Side project: BoosterTestJig (EasyEDA project "BoosterTestJig", started 2026-11-23)
+Test jig for MT3608 and SX1308 boost modules: a module sits on pogo pins (pressed into sleeves in the
+through holes) and an ESP32-C3 0.42" OLED board (U3) reads battery and boost-output voltage.
+- Board 90 x 70 mm, 3 mm corners, 4 x M3 holes, 1 GND pour, no vias. DRC 0 errors (2026-11-23).
+- Parts: TP4056 module (U4), JST-PH battery (CN2), SW1 power, HT7833 3.3 V LDO (U1), buttons OK/DOWN/UP
+  (BT1-3), buzzer SG2 via 2N7000 Q2, dividers R2/R6 (VBAT_SENSE) and R7/R8 (VOUT_SENSE).
+- Pogo holes checked against the real modules by the designer, 2.4 mm drill (hole centres, mil):
+  MT3608 IN+/IN- at x1660, OUT+/OUT- at x460; rows y645/y345 (30.48 x 7.62 mm pitch).
+  SX1308 (U2) IN at x2205, OUT at x2905; rows y700/y300 (17.78 x 10.16 mm pitch).
+- Open: confirm 2.4 mm matches the pogo sleeve datasheet; set R6/R7/R8 values (only R2 = 100k is set).
